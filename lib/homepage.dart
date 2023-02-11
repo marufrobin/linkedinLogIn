@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:linkedin_login/linkedin_login.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -21,6 +22,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    UserObject user;
     bool logoutUser = false;
     return Scaffold(
       appBar: AppBar(
@@ -34,29 +36,39 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             CircleAvatar(backgroundColor: Colors.cyan, maxRadius: 80),
-            Text(
-              "Name:",
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              "Email:",
-              style: TextStyle(fontSize: 20),
-            ),
             ElevatedButton(
                 onPressed: () {
-                  /*  Navigator.push(
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => LinkedInUserWidget(
                           appBar: AppBar(
                             title: Text("OAuth User"),
                           ),
-                          onGetUserProfile: (value) {
-                            print("Access token:: ${value.user.token}");
-                            print("user id ${value.user.userId}");
-                            print("user FirstName: ${value.user.firstName}");
-                            print("user lastName: ${value.user.lastName}");
-                            print("user email:: ${value.user.email}");
+                          onGetUserProfile:
+                              (final UserSucceededAction linkedInUser) {
+                            print("Access token:: ${linkedInUser.user.token}");
+                            print("user id ${linkedInUser.user.userId}");
+                            print(
+                                "user FirstName: ${linkedInUser.user.firstName}");
+                            print(
+                                "user lastName: ${linkedInUser.user.lastName}");
+                            print("user email:: ${linkedInUser.user.email}");
+                            user = UserObject(
+                              lastName: linkedInUser
+                                  ?.user?.lastName?.localized?.label,
+                              firstName: linkedInUser
+                                  ?.user?.firstName?.localized?.label,
+                              email: linkedInUser?.user?.email?.elements![0]
+                                  ?.handleDeep?.emailAddress,
+                              profileImageUrl: linkedInUser
+                                  ?.user
+                                  ?.profilePicture
+                                  ?.displayImageContent
+                                  ?.elements![0]
+                                  ?.identifiers![0]
+                                  ?.identifier,
+                            );
                           },
                           redirectUrl: redirectUrl,
                           clientId: clientId,
@@ -79,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                         fullscreenDialog: true,
-                      ));*/
+                      ));
                 },
                 child: Container(
                   width: 300,
@@ -107,9 +119,34 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 )),
+            // Text('First: ${user?.firstName} '),
+            // Text('Last: ${user?.lastName} '),
+            // Text('Email: ${user?.email}'),
+            // Text('Profile image: ${user?.profileImageUrl}'),
           ],
         ),
       ),
     );
   }
+}
+
+class AuthCodeObject {
+  AuthCodeObject({this.code, this.state});
+
+  final String? code;
+  final String? state;
+}
+
+class UserObject {
+  UserObject({
+    this.firstName,
+    this.lastName,
+    this.email,
+    this.profileImageUrl,
+  });
+
+  final String? firstName;
+  final String? lastName;
+  final String? email;
+  final String? profileImageUrl;
 }
